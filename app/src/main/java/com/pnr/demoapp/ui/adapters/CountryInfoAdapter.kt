@@ -12,7 +12,8 @@ import com.pnr.demoapp.ui.viewholders.InfoViewHolder
 /**
  * CountryInfoAdapter
  */
-class CountryInfoAdapter(private val infoList: ArrayList<InfoEntry>) : RecyclerView.Adapter<InfoViewHolder>() {
+class CountryInfoAdapter(private val infoList: ArrayList<InfoEntry>, private val clickListener: (InfoEntry) -> Unit) :
+    RecyclerView.Adapter<InfoViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InfoViewHolder {
         val layourInflator = LayoutInflater.from(parent.context)
@@ -26,7 +27,7 @@ class CountryInfoAdapter(private val infoList: ArrayList<InfoEntry>) : RecyclerV
     }
 
     override fun onBindViewHolder(infoViewHolder: InfoViewHolder, position: Int) {
-        infoViewHolder.bind(infoList[position])
+        infoViewHolder.bind(infoList[position], clickListener)
     }
 
     /**

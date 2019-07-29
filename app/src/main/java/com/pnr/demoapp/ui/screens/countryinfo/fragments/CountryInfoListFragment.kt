@@ -1,5 +1,6 @@
 package com.pnr.demoapp.ui.screens.countryinfo.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,9 +17,12 @@ import butterknife.ButterKnife
 import com.pnr.demoapp.R
 import com.pnr.demoapp.application.DemoApp
 import com.pnr.demoapp.base.BaseFragment
+import com.pnr.demoapp.model.InfoEntry
 import com.pnr.demoapp.ui.adapters.CountryInfoAdapter
 import com.pnr.demoapp.ui.screens.countryinfo.viewmodels.CountryInfoViewModel
 import com.pnr.demoapp.ui.screens.countryinfo.viewmodels.ViewModelFactory
+import com.pnr.demoapp.ui.screens.imageviewer.ImageViewerActivity
+import com.pnr.demoapp.util.app.constants.AppConstants
 import javax.inject.Inject
 
 /**
@@ -78,10 +82,20 @@ class CountryInfoListFragment : BaseFragment() {
      * function to init RecyclerView
      */
     private fun initRecyclerView() {
-        countryInfoAdapter = CountryInfoAdapter(ArrayList())
+        countryInfoAdapter =
+            CountryInfoAdapter(ArrayList(), { countryInfoEntry: InfoEntry -> viewImageFullScreen(countryInfoEntry) })
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = countryInfoAdapter
+    }
+
+    /**
+     * function to launch full screen image
+     */
+    private fun viewImageFullScreen(countryInfoEntry: InfoEntry) {
+        val intent = Intent(context, ImageViewerActivity::class.java)
+        intent.putExtra(AppConstants.IMAGE_URL_KEY, countryInfoEntry.imageHref)
+        startActivity(intent)
     }
 
     /**
