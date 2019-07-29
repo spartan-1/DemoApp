@@ -1,4 +1,4 @@
-package com.pnr.demoapp.ui.screens.imageviewer
+package com.pnr.demoapp.ui.screens.imageviewer.activities
 
 import android.os.Bundle
 import com.bumptech.glide.load.engine.DiskCacheStrategy

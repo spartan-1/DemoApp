@@ -52,9 +52,10 @@ class CountryInfoViewModel @Inject constructor(private val countryInfoWebService
         response?.let {
             countryInfoMutableLiveData.postValue(response.body())
         } ?: run {
-            Timber.d("errorrrrr")
+            Timber.d("error")
             //sending existing list when network call fails
-            countryInfoMutableLiveData.postValue(countryInfoMutableLiveData.value)
+            //countryInfoMutableLiveData.postValue(countryInfoMutableLiveData.value)
+            countryInfoMutableLiveData.postValue(null)
         }
     }
 

@@ -21,7 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.screens.imageviewer.ImageViewerActivity"/>
+        <activity android:name=".ui.screens.imageviewer.activities.ImageViewerActivity"/>
     </application>
 
 </manifest>

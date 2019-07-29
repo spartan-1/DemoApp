@@ -21,7 +21,7 @@ import com.pnr.demoapp.model.InfoEntry
 import com.pnr.demoapp.ui.adapters.CountryInfoAdapter
 import com.pnr.demoapp.ui.screens.countryinfo.viewmodels.CountryInfoViewModel
 import com.pnr.demoapp.ui.screens.countryinfo.viewmodels.ViewModelFactory
-import com.pnr.demoapp.ui.screens.imageviewer.ImageViewerActivity
+import com.pnr.demoapp.ui.screens.imageviewer.activities.ImageViewerActivity
 import com.pnr.demoapp.util.app.constants.AppConstants
 import javax.inject.Inject
 
@@ -65,7 +65,9 @@ class CountryInfoListFragment : BaseFragment() {
             mRefreshFeed.isRefreshing = false
             t?.let {
                 if (t.rows.isNotEmpty()) {
-                    countryInfoAdapter.updateData(t.rows)
+                    //removing entries where all 3 properties are null
+                    val filteredData = t.rows.filter { !(it.title == null && it.description == null && it.imageHref == null) }
+                    countryInfoAdapter.updateData(filteredData)
                     (activity as AppCompatActivity).supportActionBar?.title = t.title
                     showDataView()
                 } else {
@@ -85,6 +87,8 @@ class CountryInfoListFragment : BaseFragment() {
         countryInfoAdapter =
             CountryInfoAdapter(ArrayList(), { countryInfoEntry: InfoEntry -> viewImageFullScreen(countryInfoEntry) })
         recyclerView.setHasFixedSize(true)
+        //to improve recyclerview scroll experience
+        recyclerView.setItemViewCacheSize(20)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = countryInfoAdapter
     }

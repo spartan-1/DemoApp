@@ -4,6 +4,7 @@ import android.view.View
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import com.pnr.demoapp.R
+import com.pnr.demoapp.ui.screens.imageviewer.activities.ImageViewerActivity
 import org.junit.Assert.assertNotNull
 import org.junit.Rule
 import org.junit.Test
