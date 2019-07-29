@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/swipe_layout_information"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <!--Recyclerview to display the country info-->
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_country_info"
+                android:padding="@dimen/recycler_view_padding"
+                android:clipToPadding="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+        />
+        <!--Empty recyclerview massage-->
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_loading_error"
+                style="@style/Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/error_empty_recyclerview"
+                android:visibility="gone"
+                tools:text="Description"/>
+        <!--Progress indication-->
+        <ProgressBar
+                android:id="@+id/data_loading_progress"
+                android:layout_width="@dimen/dimen_progress_bar"
+                android:layout_height="@dimen/dimen_progress_bar"
+                android:indeterminateDuration="1000"
+                android:visibility="gone"
+                android:layout_centerInParent="true" />
+    </RelativeLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.text.TextUtils"/>
+
+        <variable
+                name="countryInfo"
+                type="com.pnr.demoapp.model.InfoEntry"/>
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+            android:id="@+id/info_card_view"
+            app:cardCornerRadius="@dimen/dimen_card_radius"
+            app:cardElevation="@dimen/dimen_card_elevation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_card_common_margin"
+            android:layout_marginStart="@dimen/dimen_card_common_margin"
+            android:layout_marginEnd="@dimen/dimen_card_common_margin"
+    >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/list_item_constraintlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_card_padding">
+
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_image"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintGuide_end="@dimen/dimen_constraint_guide_end"/>
+
+            <!--Right arrow-->
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_right_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@null"
+                    app:srcCompat="@drawable/right_arrow"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/border_end"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            <!--Title of the information-->
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_title"
+                    style="@style/Text.Large.Accent"
+                    android:layout_width="@dimen/dimen_0"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/dimen_2"
+                    android:fontFamily="@string/font_family_black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_right_arrow"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="@{TextUtils.isEmpty(countryInfo.title) ? @string/title_not_available : countryInfo.title}"
+                    tools:text="Title"/>
+
+            <!--Image corresponding to info-->
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/image_info"
+                    android:layout_width="@dimen/dimen_0"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@null"
+                    android:layout_margin="@dimen/dimen_common_margin"
+                    app:layout_constraintStart_toStartOf="@id/guideline_image"
+                    app:layout_constraintTop_toBottomOf="@id/text_title"
+                    app:imageUrl="@{countryInfo.imageHref}"
+                    app:layout_constraintEnd_toStartOf="@id/iv_right_arrow"
+                    tools:srcCompat="@drawable/ic_launcher_foreground"/>
+
+            <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="start"
+                    app:constraint_referenced_ids="image_info"/>
+
+            <!--Brief detail of the info-->
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/description"
+                    style="@style/Text"
+                    android:layout_width="@dimen/dimen_0"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/dimen_2"
+                    android:fontFamily="@string/font_family_condensed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/barrier_image"
+                    app:layout_constraintTop_toBottomOf="@id/text_title"
+                    android:text="@{TextUtils.isEmpty(countryInfo.description) ? @string/description_not_available : countryInfo.description}"
+                    tools:text="Description"/>
+
+            <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/border_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="image_info,description"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

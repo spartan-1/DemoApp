@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Text">
+        <item name="android:textSize">@dimen/text_base</item>
+    </style>
+    <style name="Text.Large">
+        <item name="android:textSize">@dimen/text_large</item>
+    </style>
+    <style name="Text.Large.Accent">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+</resources>

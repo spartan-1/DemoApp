@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">DemoApp</string>
+    <string name="error_data_loading">Error loading data, please check your internet connectivity</string>
+    <string name="error_server_response">Error loading data, please try after some time.</string>
+    <string name="error_empty_recyclerview">No data available</string>
+    <string name="title_not_available">Title not available</string>
+    <string name="description_not_available">Description not available</string>
 </resources>
