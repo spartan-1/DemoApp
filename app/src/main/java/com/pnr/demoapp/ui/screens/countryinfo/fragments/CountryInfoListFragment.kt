@@ -70,7 +70,7 @@ class CountryInfoListFragment : BaseFragment() {
         super.onResume()
         mRefreshFeed.setOnRefreshListener {
             refreshScreenRequired = true
-            countryInfoViewModel.loadData(refreshRequired = true, infiniteScroll = false)
+            loadDataFromVM(refreshRequired = true, infiniteScroll = false)
         }
     }
 
@@ -96,8 +96,7 @@ class CountryInfoListFragment : BaseFragment() {
         countryInfoViewModel = ViewModelProviders.of(this, viewModelFactory).get(CountryInfoViewModel::class.java)
         initRecyclerView()
         showProgressView()
-        countryInfoViewModel.loadData(refreshRequired = false, infiniteScroll = false)
-            .observe(this, countryInfoObserver)
+        loadDataFromVM(refreshRequired = false, infiniteScroll = false)
         // retry option to load when endless scroll failed
         scrollLoadError.setOnClickListener {
             loadMoreData()
@@ -122,16 +121,20 @@ class CountryInfoListFragment : BaseFragment() {
                 showEndlessScrollError()
             }
         } ?: run {
-            when {
-                refreshScreenRequired -> {
-                    refreshScreenRequired = false
-                    countryInfoAdapter.clearData()
-                    showErrorView()
-                }
-                //This is to keep screen/list state screen/rotation
-                countryInfoAdapter.itemCount != 0 -> showEndlessScrollError()
-                else -> showErrorView()
+            handleErrorUIScenarios()
+        }
+    }
+
+    private fun handleErrorUIScenarios() {
+        when {
+            refreshScreenRequired -> {
+                refreshScreenRequired = false
+                countryInfoAdapter.clearData()
+                showErrorView()
             }
+            //This is to keep screen/list state screen/rotation
+            countryInfoAdapter.itemCount != 0 -> showEndlessScrollError()
+            else -> showErrorView()
         }
     }
 
@@ -140,7 +143,15 @@ class CountryInfoListFragment : BaseFragment() {
      */
     fun loadMoreData() {
         showEndlessScrollProgress()
-        countryInfoViewModel.loadData(refreshRequired = false, infiniteScroll = true)
+        loadDataFromVM(refreshRequired = false, infiniteScroll = true)
+    }
+
+    /**
+     * utility function to load data from VM
+     */
+    private fun loadDataFromVM(refreshRequired: Boolean, infiniteScroll: Boolean) {
+        countryInfoViewModel.loadData(refreshRequired = refreshRequired, infiniteScroll = infiniteScroll)
+            .observe(this, countryInfoObserver)
     }
 
     /**
