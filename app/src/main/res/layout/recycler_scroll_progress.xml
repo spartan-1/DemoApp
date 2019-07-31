@@ -32,6 +32,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="@dimen/dimen_24"
+                android:clickable="false"
+                android:focusable="false"
                 android:background="@drawable/retry_selector"
                 android:layout_toStartOf="@+id/scroll_error_layout"
                 android:padding="@dimen/dimen_8"
@@ -47,6 +49,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/dimen_24"
                 android:layout_marginStart="@dimen/dimen_16"
+                android:clickable="false"
+                android:focusable="false"
                 android:gravity="center_vertical"
                 android:layout_centerHorizontal="true"
                 android:orientation="vertical">

@@ -11,6 +11,7 @@
                 android:id="@+id/rv_country_info"
                 android:padding="@dimen/recycler_view_padding"
                 android:clipToPadding="false"
+                android:layout_above="@+id/list_progress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
         />

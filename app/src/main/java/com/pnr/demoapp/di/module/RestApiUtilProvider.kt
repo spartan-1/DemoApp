@@ -31,6 +31,7 @@ class RestApiUtilProvider {
             httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
             okHttpClientBuilder.addInterceptor(httpLoggingInterceptor)
         }
+        //to cache the network response
         val cache = Cache(context.cacheDir, Constants.CACHE_SIZE)
         return okHttpClientBuilder
             .connectTimeout(Constants.API_CONNECT_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)
