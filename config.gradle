@@ -9,8 +9,4 @@ ext {
             appVersionCode   : 1,
             appVersionName   : '1.0'
     ]
-
-    dependencies = [
-
-    ]
 }
