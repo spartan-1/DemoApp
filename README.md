@@ -1,5 +1,5 @@
 # DemoApp
-Android poc app to display list of feed provide by a Rest API
+Android poc app to display list of feed provided by a Rest API<br />
 Developed in Kotlin
 
 # Concepts used : <br />
