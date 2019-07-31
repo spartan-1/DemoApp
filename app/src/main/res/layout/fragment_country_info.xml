@@ -7,13 +7,21 @@
         android:layout_height="match_parent">
     <RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
         <!--Recyclerview to display the country info-->
-        <androidx.recyclerview.widget.RecyclerView
+        <com.pnr.demoapp.util.customviews.CustomRecyclerView
                 android:id="@+id/rv_country_info"
                 android:padding="@dimen/recycler_view_padding"
                 android:clipToPadding="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
         />
+        <!--Progress bar to display during infinite scrolling-->
+        <include layout="@layout/recycler_scroll_progress"
+                 android:id="@+id/list_progress"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_alignParentBottom="true"
+                 android:layout_centerInParent="true"
+                 tools:text="Description"/>
         <!--Empty recyclerview massage-->
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_loading_error"
@@ -31,6 +39,6 @@
                 android:layout_height="@dimen/dimen_progress_bar"
                 android:indeterminateDuration="1000"
                 android:visibility="gone"
-                android:layout_centerInParent="true" />
+                android:layout_centerInParent="true"/>
     </RelativeLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

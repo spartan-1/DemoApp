@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.ViewModelProviders
@@ -17,12 +18,16 @@ import butterknife.ButterKnife
 import com.pnr.demoapp.R
 import com.pnr.demoapp.application.DemoApp
 import com.pnr.demoapp.base.BaseFragment
+import com.pnr.demoapp.model.CountryInfoResponse
 import com.pnr.demoapp.model.InfoEntry
 import com.pnr.demoapp.ui.adapters.CountryInfoAdapter
 import com.pnr.demoapp.ui.screens.countryinfo.viewmodels.CountryInfoViewModel
 import com.pnr.demoapp.ui.screens.countryinfo.viewmodels.ViewModelFactory
-import com.pnr.demoapp.ui.screens.imageviewer.ImageViewerActivity
+import com.pnr.demoapp.ui.screens.imageviewer.activities.ImageViewerActivity
 import com.pnr.demoapp.util.app.constants.AppConstants
+import com.pnr.demoapp.util.app.constants.ErrorType
+import com.pnr.demoapp.util.customviews.CustomRecyclerView
+import com.pnr.demoapp.util.customviews.CustomScrollListener
 import javax.inject.Inject
 
 /**
@@ -34,7 +39,7 @@ class CountryInfoListFragment : BaseFragment() {
     lateinit var mRefreshFeed: SwipeRefreshLayout
 
     @BindView(R.id.rv_country_info)
-    lateinit var recyclerView: RecyclerView
+    lateinit var recyclerView: CustomRecyclerView
 
     @BindView(R.id.data_loading_progress)
     lateinit var progressBar: ProgressBar
@@ -42,18 +47,48 @@ class CountryInfoListFragment : BaseFragment() {
     @BindView(R.id.text_loading_error)
     lateinit var errorMessage: AppCompatTextView
 
+    @BindView(R.id.loadmore_progress)
+    lateinit var loadMoreProgress: ProgressBar
+
+    @BindView(R.id.loadmore_errorlayout)
+    lateinit var scrollLoadError: RelativeLayout
+
+
     private lateinit var countryInfoViewModel: CountryInfoViewModel
 
     private lateinit var countryInfoAdapter: CountryInfoAdapter
 
+    private var refreshScreenRequired = false
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    /**
+     * function onResume
+     */
     override fun onResume() {
         super.onResume()
-        mRefreshFeed.setOnRefreshListener { countryInfoViewModel.loadData(true) }
+        mRefreshFeed.setOnRefreshListener {
+            refreshScreenRequired = true
+            countryInfoViewModel.loadData(refreshRequired = true, infiniteScroll = false)
+        }
     }
 
+    /**
+     * countryInfoObserver
+     */
+    private val countryInfoObserver = androidx.lifecycle.Observer<CountryInfoResponse> { t ->
+        mRefreshFeed.isRefreshing = false
+        t?.let {
+            updateData(t)
+        } ?: run {
+            updateData(null)
+        }
+    }
+
+    /**
+     * function onCreateView
+     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_country_info, container, false)
         ButterKnife.bind(this, view)
@@ -61,21 +96,60 @@ class CountryInfoListFragment : BaseFragment() {
         countryInfoViewModel = ViewModelProviders.of(this, viewModelFactory).get(CountryInfoViewModel::class.java)
         initRecyclerView()
         showProgressView()
-        countryInfoViewModel.loadData(false).observe(this, androidx.lifecycle.Observer { t ->
-            mRefreshFeed.isRefreshing = false
-            t?.let {
-                if (t.rows.isNotEmpty()) {
-                    countryInfoAdapter.updateData(t.rows)
-                    (activity as AppCompatActivity).supportActionBar?.title = t.title
-                    showDataView()
-                } else {
+        countryInfoViewModel.loadData(refreshRequired = false, infiniteScroll = false)
+            .observe(this, countryInfoObserver)
+        // retry option to load when endless scroll failed
+        scrollLoadError.setOnClickListener {
+            loadMoreData()
+        }
+        return view
+    }
+
+    /**
+     * function to process and update response
+     */
+    private fun updateData(values: CountryInfoResponse?) {
+        values?.countryInfo?.let {
+            clearEndlessScrollProgress()
+            refreshScreenRequired = false
+            //clearing the entries where all 3 properties are null
+            val filteredData =
+                values.countryInfo.rows.filter { !(it.title == null && it.description == null && it.imageHref == null) }
+            countryInfoAdapter.updateData(filteredData)
+            (activity as AppCompatActivity).supportActionBar?.title = values.countryInfo.title
+            showDataView()
+            if (values.errorStatus == ErrorType.API_FAILURE) {
+                showEndlessScrollError()
+            }
+        } ?: run {
+            when {
+                refreshScreenRequired -> {
+                    refreshScreenRequired = false
+                    countryInfoAdapter.clearData()
                     showErrorView()
                 }
-            } ?: run {
-                showErrorView()
+                //This is to keep screen/list state screen/rotation
+                countryInfoAdapter.itemCount != 0 -> showEndlessScrollError()
+                else -> showErrorView()
             }
-        })
-        return view
+        }
+    }
+
+    /**
+     * function to load data when the end of recycler view reached
+     */
+    fun loadMoreData() {
+        showEndlessScrollProgress()
+        countryInfoViewModel.loadData(refreshRequired = false, infiniteScroll = true)
+    }
+
+    /**
+     * Listener to check if end of recycler view is reached
+     */
+    private fun mScrollListener(manager: LinearLayoutManager) = object : CustomScrollListener(manager) {
+        override fun onLoadMoreData(page: Int, totalItemsCount: Int, view: RecyclerView) {
+            loadMoreData()
+        }
     }
 
     /**
@@ -83,10 +157,14 @@ class CountryInfoListFragment : BaseFragment() {
      */
     private fun initRecyclerView() {
         countryInfoAdapter =
-            CountryInfoAdapter(ArrayList(), { countryInfoEntry: InfoEntry -> viewImageFullScreen(countryInfoEntry) })
+            CountryInfoAdapter(ArrayList()) { countryInfoEntry: InfoEntry -> viewImageFullScreen(countryInfoEntry) }
         recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        //to improve recyclerview scroll experience
+        recyclerView.setItemViewCacheSize(20)
+        val manager = LinearLayoutManager(context)
+        recyclerView.layoutManager = manager
         recyclerView.adapter = countryInfoAdapter
+        recyclerView.addOnScrollListener(mScrollListener(manager))
     }
 
     /**
@@ -123,5 +201,29 @@ class CountryInfoListFragment : BaseFragment() {
         progressBar.visibility = View.GONE
         recyclerView.visibility = View.VISIBLE
         errorMessage.visibility = View.GONE
+    }
+
+    /**
+     * function to display scroll more data error
+     */
+    private fun showEndlessScrollError() {
+        scrollLoadError.visibility = View.VISIBLE
+        loadMoreProgress.visibility = View.GONE
+    }
+
+    /**
+     * function to display scroll more progress
+     */
+    private fun showEndlessScrollProgress() {
+        scrollLoadError.visibility = View.GONE
+        loadMoreProgress.visibility = View.VISIBLE
+    }
+
+    /**
+     * function to clear scroll more progress
+     */
+    private fun clearEndlessScrollProgress() {
+        scrollLoadError.visibility = View.GONE
+        loadMoreProgress.visibility = View.GONE
     }
 }

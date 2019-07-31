@@ -17,6 +17,7 @@ class CountryInfoWebService @Inject constructor(private var apiService: ApiServi
         try {
             return apiService.getCountryInfo()
         } catch(e:Exception){
+            //when there is no internet connection
             return null
         }
     }

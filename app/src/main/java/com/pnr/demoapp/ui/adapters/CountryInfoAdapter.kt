@@ -26,24 +26,29 @@ class CountryInfoAdapter(private val infoList: ArrayList<InfoEntry>, private val
         return infoList.size
     }
 
+    override fun getItemId(position: Int): Long {
+        return infoList[position].description.hashCode().toLong()
+    }
+
     override fun onBindViewHolder(infoViewHolder: InfoViewHolder, position: Int) {
         infoViewHolder.bind(infoList[position], clickListener)
     }
 
     /**
-     * function to update adapter data
+     * function to update data
      */
-    fun updateData(infoList: ArrayList<InfoEntry>) {
+    fun updateData(infoList: List<InfoEntry>) {
         this.infoList.clear()
         this.infoList.addAll(infoList)
         notifyDataSetChanged()
     }
 
     /**
-     * function to add data
+     * function to clear data
      */
-    fun addData(infoList: ArrayList<InfoEntry>) {
-        this.infoList.addAll(infoList)
+    fun clearData() {
+        this.infoList.clear()
         notifyDataSetChanged()
     }
+
 }
