@@ -2,16 +2,17 @@
 Android poc app to display list of feed provide by a Rest API
 Developed in Kotlin
 
-Concepts used : 
-MVVM Pattern 
-Architecture Components  
-ConstraintLayout 
-Retrofit2  
-Glide v4  
-Timber 
-OkHttp 
-DataBinding 
-Butterknife 
-Espresso - Testing 
-Material Views
-Coroutines
+# Concepts used : <br />
+MVVM Pattern <br />
+Architecture Components  <br />
+ConstraintLayout <br />
+Retrofit2  <br />
+Glide v4  <br />
+Timber <br />
+OkHttp <br />
+DataBinding <br />
+Butterknife <br />
+Espresso - Testing <br />
+Material Views <br />
+Coroutines <br />
+PhotoView
