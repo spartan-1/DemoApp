@@ -3,7 +3,9 @@ package com.pnr.demoapp.ui.screens.countryinfo.viewmodels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.pnr.demoapp.model.CountryInfo
+import com.pnr.demoapp.model.CountryInfoResponse
 import com.pnr.demoapp.restclient.webservice.CountryInfoWebService
+import com.pnr.demoapp.util.app.constants.ErrorType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -22,12 +24,12 @@ class CountryInfoViewModel @Inject constructor(private val countryInfoWebService
 
     override val coroutineContext: CoroutineContext get() = job + Dispatchers.Main
 
-    private lateinit var countryInfoMutableLiveData: MutableLiveData<CountryInfo>
+    private lateinit var countryInfoMutableLiveData: MutableLiveData<CountryInfoResponse>
 
     /**
      * load Country information data
      */
-    fun loadData(refreshRequired: Boolean): MutableLiveData<CountryInfo> {
+    fun loadData(refreshRequired: Boolean, infiniteScroll: Boolean): MutableLiveData<CountryInfoResponse> {
         Timber.d("Viewmodel loadData")
         var initStatus = false
         if (!::countryInfoMutableLiveData.isInitialized) {
@@ -35,10 +37,15 @@ class CountryInfoViewModel @Inject constructor(private val countryInfoWebService
             initStatus = true
         }
         this.launch(coroutineContext) {
-            if (refreshRequired || initStatus) {
-                loadDataFromWebService()
+            if (refreshRequired || initStatus || infiniteScroll) {
+                loadDataFromWebService(refreshRequired)
             } else {
-                countryInfoMutableLiveData.postValue(countryInfoMutableLiveData.value)
+                countryInfoMutableLiveData.postValue(
+                    CountryInfoResponse(
+                        false, null,
+                        countryInfoMutableLiveData.value!!.countryInfo
+                    )
+                )
             }
         }
         return countryInfoMutableLiveData
@@ -47,15 +54,54 @@ class CountryInfoViewModel @Inject constructor(private val countryInfoWebService
     /**
      * Call webservice to load data
      */
-    private suspend fun loadDataFromWebService() {
+    private suspend fun loadDataFromWebService(refreshRequired: Boolean) {
         val response = countryInfoWebService.getCountryInfo()
         response?.let {
-            countryInfoMutableLiveData.postValue(response.body())
+            //handling success response
+            if (response.isSuccessful && response.body() != null) {
+                countryInfoMutableLiveData.value?.let {
+                    val data: CountryInfo
+                    if (refreshRequired) {
+                        data = response.body() as CountryInfo
+                    } else {
+                        data = CountryInfo(
+                            response.body()!!.title,
+                            response.body()!!.rows + countryInfoMutableLiveData.value!!.countryInfo!!.rows
+                        )
+                    }
+                    countryInfoMutableLiveData.postValue(CountryInfoResponse(true, null, data))
+                } ?: run {
+                    //This is for first time launch, livedata will be null on first launch
+                    countryInfoMutableLiveData.postValue(
+                        CountryInfoResponse(
+                            true,
+                            null,
+                            response.body() as CountryInfo
+                        )
+                    )
+                }
+            } else {
+
+                countryInfoMutableLiveData.postValue(
+                    CountryInfoResponse(
+                        false, ErrorType.NO_DATA,
+                        countryInfoMutableLiveData.value!!.countryInfo
+                    )
+                )
+            }
         } ?: run {
-            Timber.d("error")
-            //sending existing list when network call fails
-            //countryInfoMutableLiveData.postValue(countryInfoMutableLiveData.value)
-            countryInfoMutableLiveData.postValue(null)
+            Timber.d("error response")
+            countryInfoMutableLiveData.value?.let {
+                countryInfoMutableLiveData.postValue(
+                    CountryInfoResponse(
+                        false,
+                        ErrorType.API_FAILURE,
+                        countryInfoMutableLiveData.value!!.countryInfo
+                    )
+                )
+            } ?: run {
+                countryInfoMutableLiveData.postValue(CountryInfoResponse(true, null, null))
+            }
         }
     }
 

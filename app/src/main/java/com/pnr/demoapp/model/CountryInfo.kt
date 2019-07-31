@@ -5,5 +5,5 @@ package com.pnr.demoapp.model
  */
 data class CountryInfo(
     val title: String?,
-    val rows: ArrayList<InfoEntry>
+    val rows: List<InfoEntry>
 )

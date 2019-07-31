@@ -5,6 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+    <!--PhotoView to display full screen image-->
     <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/image_full_screen"
             android:layout_width="match_parent"

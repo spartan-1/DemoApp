@@ -6,4 +6,7 @@
     <string name="title_not_available">Title not available</string>
     <string name="description_not_available">Description not available</string>
     <string name="content_desc_image_fullscreen">Full screen view of the image</string>
+    <string name="retry_loading_list">Retry loading</string>
+    <string name="error_data_loading_list_progress">Failed to load data</string>
+    <string name="retry">Retry</string>
 </resources>

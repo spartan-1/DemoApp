@@ -21,8 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimen_card_common_margin"
             android:layout_marginStart="@dimen/dimen_card_common_margin"
-            android:layout_marginEnd="@dimen/dimen_card_common_margin"
-    >
+            android:layout_marginEnd="@dimen/dimen_card_common_margin">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/list_item_constraintlayout"

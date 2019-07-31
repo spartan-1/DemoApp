@@ -35,7 +35,7 @@ class CountryInfoAdapter(private val infoList: ArrayList<InfoEntry>, private val
     }
 
     /**
-     * function to update adapter data
+     * function to update data
      */
     fun updateData(infoList: List<InfoEntry>) {
         this.infoList.clear()
@@ -44,12 +44,11 @@ class CountryInfoAdapter(private val infoList: ArrayList<InfoEntry>, private val
     }
 
     /**
-     * function to add data
+     * function to clear data
      */
-    fun addData(infoList: List<InfoEntry>) {
-        this.infoList.addAll(infoList)
+    fun clearData() {
+        this.infoList.clear()
         notifyDataSetChanged()
     }
-
 
 }
